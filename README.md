@@ -4,9 +4,7 @@
 ###Description:
 Stuff to find variations on a sequence of bases
 
-to do:
-makeVariations has an unspecified second argument that will tell how many changes 
-are allowed. Needs to be coded, and tested.
+Note: the README.md in the subfolder has more info (is showing all from the info substack)
 ---
 ###Goals:
 ####Completed:
