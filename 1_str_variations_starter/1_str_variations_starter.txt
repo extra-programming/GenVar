@@ -1,211 +1,1 @@
-# created as stack "moose60g:students:class_of_2003:Elan Guterman:work:strings" on 9/10/02
-
-on openstack
-   send "choose browse tool" to me in .5 second
-   #how about try loadStackScript right now, rather than manually push the button.
-   pass openstack
-end openstack
-
-
-
-#note: loadStackScript is in the button on page 1
-on saveStackScript
-   #ask file "Save stack script where?" with "genvar.txt"
-   #put it into savePath
-   #   if it is empty then 
-   #      exit to top
-   #   end if
-   local savePath
-   put the filename of this stack into savePath
-   local whereToSave
-   put ("file:" & savePath) into whereToSave
-   #now gotta remove our filename, OR just use a txt suffix
-   set the itemdelimiter to "."
-   put "txt" into the last item of whereToSave
-   put the script of this stack into url whereToSave
-   local whatHappened
-   put the result into whatHappened
-   if whatHappened is not empty then
-      answer whatHappened
-   end if
-end saveStackScript
-
-
-on saveStackRequest
-   saveStackScript
-   pass saveStackRequest
-end saveStackRequest
-
-
-
-
-
-
-
-/*
-This should construct and save all the possible strings that
-are single operation changes to the starter.
-(i.e. one insertion, or one deletion, or one mutation)
-Louis points out that some mutations are more likely than others,
-so we'll need a fancy cost function that includes that knowledge.
-*/
-on makeVariations
-   put empty into cd fld "output"
-   local mystring,howLong
-
-   put card field "starter" into mystring
-   put the number of chars of mystring into howLong
-   
-   /*
-   repeat with x = 1 to howLong
-      if char 1 of myString = "a" then
-         put "c" into char 1 of myString
-      else if not (char 2 to 3 of myString = "ct") then
-         put "a" after char 4 of myString
-      end if
-   end repeat
-   
-   test
-   dostuff 5,6
-   local m, volkswagen
-   put  crazy(23,7) into m
-   put otherbases("a") into volkswagen  #will look like "c,t,g"
-   put item 2 of volkswagen after cd fld "output"  #note "item"
-   */
-end makeVariations
-
-
-#what about rna? "actg" should be 
-#[]test this more, harder
-function randomBase
-   return item random(4) of bases()
-end randomBase
-
-
-function isBase base
-   return base in bases()
-end isBase
-
-
-function bases
-   return the bases of this stack  #"a,c,g,t"
-end bases
-
-
-function isBases dataString
-   repeat for each char c in dataString
-      if not isBase(c) then return false
-   end repeat
-   return true
-end isBases
-
-
-#if newBase is empty, choose a random replacement base
-function pointMutation dataString, pos, newBase
-   local dataLength
-   put the number of chars of dataString into dataLength
-   if dataString is empty then
-      return empty
-   else if not isBases(dataString) then
-      answer "Wha??? How can I mutate non-base '" & dataString & "'."
-      breakpoint
-      exit to top
-      #quit
-   end if
-   
-   if pos is empty then
-      put random(dataLength) into pos
-   else if pos is not a number then
-      answer "Wha??? How can I mutate non-numerical position" && pos && "of string '" & dataString & "'."
-      breakpoint
-      exit to top
-   else if pos > dataLength then
-      answer "Wha??? How can I mutate position" && pos && "of string '" & dataString & "', which has length" && dataLength
-      breakpoint
-      exit to top
-   else if pos < 1 then
-      answer "Wha??? How can I mutate zero or negative position" && pos && "of string '" & dataString & "'."
-      breakpoint
-      exit to top
-   end if
-   
-   if newBase is empty then
-      put randomBase() into newBase
-   else if not isBase(newBase) then
-      answer "Wha??? How can put non-base " && newBase && "into string '" & dataString & "'."
-      breakpoint
-      exit to top
-   end if
-   
-   put newBase into char pos of dataString
-   return dataString
-end pointMutation
-
-/*
-on dostuff x,y
-   --this is a comment, in a procedure which returns nothing
-   put x & return after cd fld "output"
-   local silly
-   put "xyz" into silly
-   put y after char 2 of silly
-   put y before char 1 of silly
-   delete char 4 to 6 of silly
-   put char 2 to 4 of silly after silly
-   answer silly
-end dostuff
-
-
-function crazy x,y
-   --this is a function which returns a value
-   return x & y
-end crazy
-*/
-
-function otherbases base
-   --given one base (a,c,t, or g), this functions returns
-   --the other 3 separated by commas.
-   --Example: otherbases("a") ==> "c,t,g"
-   --(This is handy when you are doing mutations af some base B, because then you
-   --can get item 1 or 2 or 3 of otherbases(B)
-   --
-   local others
-   repeat for each char c in bases()
-      if c is not base then put c & "," after others
-   end repeat
-   delete the last char of others
-   return others
-   /*
-   #answer "called otherbases"
-   local mybases, myOthers, whereBaseIs
-   put "actg" into mybases
-   put "c,g,t   a,g,t   a,c,g    a,c,t" into myOthers
-   put offset(base,mybases) into whereBaseIs   --offset says where something is
-   if whereBaseIs < 1 or whereBaseIs > 4 then
-      answer "Bad base '" & base & "'"
-   else
-      local finalAnswer
-      put word whereBaseIs of myOthers into finalAnswer --note "word"
-      return finalAnswer
-   end if
-   */
-end otherbases
-
-
-
-#checking, asks the human to make sure that function otherbases works
-on testOtherBases
-   put "- - - - - - - - - - -" & return after cd fld "output"
-   put "checking to make sure that otherbases works:" & return after cd fld "output"
-   local currBase, others
-   repeat for each item currBase in bases()
-      put "currBase =" && currBase & ", other bases are {" after cd fld "output"
-      put otherbases(currBase) into others     # otherwise called repeatedly
-      repeat for each item X in others
-         put X & "," after cd fld "output"
-         #if X < 3 then put "," after cd fld "output"
-      end repeat
-      delete last char of cd fld "output"   #
-      put "}" & return after cd fld "output"
-   end repeat
-   put "- - - - - - - - - - done testing" & return after cd fld "output"
-end testOtherBases
+# created as stack "moose60g:students:class_of_2003:Elan Guterman:work:strings" on 9/10/02on openstack   send "choose browse tool" to me in .5 second   answer "Load stack script from external file?" with "Nah" or "Load"   if it is "Load" then      send "loadStackScript" to button "loadStackScriptBtn" in 0.5 second   end if   #how about try loadStackScript right now, rather than manually push the button.   pass openstackend openstack#note: loadStackScript is in the button on page 1on saveStackScript   #ask file "Save stack script where?" with "genvar.txt"   #put it into savePath   #   if it is empty then    #      exit to top   #   end if   local savePath   put the filename of this stack into savePath   local whereToSave   put ("file:" & savePath) into whereToSave   #now gotta remove our filename, OR just use a txt suffix   set the itemdelimiter to "."   put "txt" into the last item of whereToSave   put the script of this stack into url whereToSave   local whatHappened   put the result into whatHappened   if whatHappened is not empty then      answer whatHappened   end ifend saveStackScripton saveStackRequest   saveStackScript   pass saveStackRequestend saveStackRequest/*This should construct and save all the possible strings thatare single operation changes to the starter.(i.e. one insertion, or one deletion, or one mutation)Louis points out that some mutations are more likely than others,so we'll need a fancy cost function that includes that knowledge.*/on doVariations   put empty into cd fld "output"   local starter   put card field "starter" into starter       local theVariations   put makeVariations( starter ) into theVariations   put theVariations into fld "output"end doVariationsfunction makeVariations starter   local starterLength   put the number of chars of starter into starterLength   end makeVariations#what about rna? "actg" should be #[]test this more, harderfunction randomBase   return item random(4) of bases()end randomBasefunction isBase base   return base in bases()end isBasefunction bases   return the bases of this stack  #"a,c,g,t"end basesfunction isBases dataString   repeat for each char c in dataString      if not isBase(c) then return false   end repeat   return trueend isBases#if newBase is empty, choose a random replacement basefunction pointMutation dataString, pos, newBase   local dataLength   put the number of chars of dataString into dataLength   if dataString is empty then      return empty   else if not isBases(dataString) then      answer "Wha??? How can I mutate non-base '" & dataString & "'."      breakpoint      exit to top      #quit   end if      if pos is empty then      put random(dataLength) into pos   else if pos is not a number then      answer "Wha??? How can I mutate non-numerical position" && pos && "of string '" & dataString & "'."      breakpoint      exit to top   else if pos > dataLength then      answer "Wha??? How can I mutate position" && pos && "of string '" & dataString & "', which has length" && dataLength      breakpoint      exit to top   else if pos < 1 then      answer "Wha??? How can I mutate zero or negative position" && pos && "of string '" & dataString & "'."      breakpoint      exit to top   end if      if newBase is empty then      put randomBase() into newBase   else if not isBase(newBase) then      answer "Wha??? How can put non-base " && newBase && "into string '" & dataString & "'."      breakpoint      exit to top   end if      put newBase into char pos of dataString   return dataStringend pointMutation/*on dostuff x,y   --this is a comment, in a procedure which returns nothing   put x & return after cd fld "output"   local silly   put "xyz" into silly   put y after char 2 of silly   put y before char 1 of silly   delete char 4 to 6 of silly   put char 2 to 4 of silly after silly   answer sillyend dostufffunction crazy x,y   --this is a function which returns a value   return x & yend crazy*/function otherbases base   --given one base (a,c,t, or g), this functions returns   --the other 3 separated by commas.   --Example: otherbases("a") ==> "c,t,g"   --(This is handy when you are doing mutations af some base B, because then you   --can get item 1 or 2 or 3 of otherbases(B)   --   local others   repeat for each char c in bases()      if c is not base then put c & "," after others   end repeat   delete the last char of others   return others   /*   #answer "called otherbases"   local mybases, myOthers, whereBaseIs   put "actg" into mybases   put "c,g,t   a,g,t   a,c,g    a,c,t" into myOthers   put offset(base,mybases) into whereBaseIs   --offset says where something is   if whereBaseIs < 1 or whereBaseIs > 4 then      answer "Bad base '" & base & "'"   else      local finalAnswer      put word whereBaseIs of myOthers into finalAnswer --note "word"      return finalAnswer   end if   */end otherbases/*#notes re assert from livecode 6.6.0 release notesAn experimental command has been added to support writing tests. The assert command has two forms.The first form evaluates an expression and checks to see if the it evaluates to true or false:assert exprassert true exprassert false exprThe second form evaluates an expression and checks to see if it throws an error or not:assert success exprassert failure exprIn either case if the condition fails, then an assertError message is sent to the object containing the command:assertError handlerName, line, column, objectLongIdExamples:assert 1 is 1 -- succeedsassert true "black" is "white" -- failsassert false "hello" is a number -- succeedsassert false 1 + 1 = 2 -- failsassert success 1 + 1 -- succeedsassert failure 1 + "z" -- fails*/#our rough draft of assert#on assert value1, relationship, value2, errMsg, doDebugIfUnhappy#   switch (relationship)  #      case "="    #      case "=="   #      case "is"#      case "equals"#         -- all of the above case conditions execute the following#         -- statements:#         if value1 = value2 then#            #happy#         else#            errLog( errMsg )#            if doDebugIfUnhappy then#               breakpoint#            end if#         end if#         break#      default#         go next card#   end switch#end asserton testMakeAllVariations   #set the randomSeed to 4570422         assert makeAllVariations("a",0) is "a"    end testMakeAllVariations#checking, asks the human to make sure that function otherbases workson testOtherBases   put "- - - - - - - - - - -" & return after cd fld "output"   put "checking to make sure that otherbases works:" & return after cd fld "output"   local currBase, others   repeat for each item currBase in bases()      put "currBase =" && currBase & ", other bases are {" after cd fld "output"      put otherbases(currBase) into others     # otherwise called repeatedly      repeat for each item X in others         put X & "," after cd fld "output"         #if X < 3 then put "," after cd fld "output"      end repeat      delete last char of cd fld "output"   #      put "}" & return after cd fld "output"   end repeat   put "- - - - - - - - - - done testing" & return after cd fld "output"end testOtherBases
