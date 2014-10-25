@@ -344,6 +344,7 @@ on testMakeAllVariations
    
    #assuming order is mutations, insert (before), insert after,delete
    assert makeAllVariations("a",1) is "a,c,g,t,aa,ca,ga,ta,aa,ac,ag,at,,"
+   #assert setsAreEqual(makeAllVariations("a",1), "a,c,g,t,aa,ca,ga,ta,aa,ac,ag,at,,")
    put 4 into wassup
 end testMakeAllVariations
 
