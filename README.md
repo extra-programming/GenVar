@@ -14,6 +14,7 @@ Note: the README.md in the subfolder has more info (is showing all from the info
 
 ####Short Term Plans:
 * Create short term plans
+*[]read info stack in from README.md (in sub folders, not this one) so we can edit to-do list as text!
 
 ####Long Term Plans:
 * Create long term plans
