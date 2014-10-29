@@ -344,9 +344,73 @@ on testMakeAllVariations
    
    #assuming order is mutations, insert (before), insert after,delete
    assert makeAllVariations("a",1) is "a,c,g,t,aa,ca,ga,ta,aa,ac,ag,at,,"
-   #assert setsAreEqual(makeAllVariations("a",1), "a,c,g,t,aa,ca,ga,ta,aa,ac,ag,at,,")
+   #assert listsHaveSameElements(makeAllVariations("a",1), "a,c,g,t,aa,ca,ga,ta,aa,ac,ag,at,,")
    put 4 into wassup
 end testMakeAllVariations
+
+
+/* not sets: there can be repeated elements (which we'll have to count) */
+/* If these sets are not too big, we could sort them! */
+function listsHaveSameElements a b
+   if a is empty and b is empty then 
+      return true
+   end if
+   local asize,bsize
+   put the number of items of a into asize
+   put the number of items of b into bsize
+   if asize <> bsize then
+      return false
+   end if
+   #first check that every item of list a appears in b
+   #time is O(asize * bsize) == O(asize^2)
+   repeat for each item i in a
+      if i is not among the items of b then
+         return false
+      end if
+   end repeat
+   
+   #then check that each item appears the same number of times
+   sort items of a       #time is O(asize^2)
+   sort items of b       #time is O(asize^2)
+   repeat with c = 1 to asize     #time is O(asize)
+      if item c of a <> item c of b then
+         return false
+      end if
+   end repeat
+end listsHaveSameElements
+
+
+on testListsHaveSameElements
+   local c1, c2
+   put "a,b,c" into c1
+   put "c,b,a" into c2
+   #assert listsHaveSameElements(c1,c2)
+   if not listsHaveSameElements(c1, c2) then
+      logTestErr "fail: listsHaveSameElements( ) thinks" && c1 && "has different elements than" && c2 
+   end if
+   put "c,b,aa" into c2
+   #assert false listsHaveSameElements(c1,c2)
+   if listsHaveSameElements(c1, c2) then
+      logTestErr "fail: listsHaveSameElements( ) thinks" && c1 && "has same elements as" && c2 
+   end if
+   put "c,b,a,a" into c2
+   #assert false listsHaveSameElements(c1,c2)
+   if listsHaveSameElements(c1, c2) then
+      logTestErr "fail: listsHaveSameElements( ) thinks" && c1 && "has same elements as" && c2 
+   end if
+   put "" into c2
+   #assert false listsHaveSameElements(c1,c2)
+   if listsHaveSameElements(c1, c2) then
+      logTestErr "fail: listsHaveSameElements( ) thinks" && c1 && "has same elements as" && c2 
+   end if
+end testListsHaveSameElements
+
+
+/* send our test Err messages somewhere useful */
+on logTestErr msg
+   answer msg    #cheap shortcut, maybe better to put into a field or stack property??
+   put msg after fld "output"
+end logTestErr msg
 
 
 #checking, asks the human to make sure that function otherbases works
