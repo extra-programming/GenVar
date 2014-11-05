@@ -7,9 +7,13 @@
 \f0\fs28 \cf0 git from command line:\
 \
 First, cd into the proper (git repository local) directory\
-\
-\
-to copy a repo from git onto local machine:\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f1\b \cf0 \CocoaLigature0     cd ~/Documents/GenVar
+\f0\b0 \CocoaLigature1 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 \
+to copy a repo from git onto local machine if it isn't there already:\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
 
 \f1\b \cf0 \CocoaLigature0     git clone https://github.com/extra-programming/GenVar.git
@@ -29,32 +33,39 @@ to download new changes from online and merge them in to local \
 \f1 \cf0 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
-\f0 \cf0 push [a]ll changes to the local (usually this machine's) git repo
+\f0 \cf0 push [a]ll changes to the local (usually this machine's) git repo\
+(local changes will be marked as "want to keep")\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f1\b \cf0    export EDITOR=nano
+\f0\b0          #optional but helpful
 \f1\b \
    git commit -a
 \f0\b0          #a means \'93all\'94\
-Note: you\'92ll be asked to edit the comment about the push. See editor notes below. Note: for more info about the git commit command in particular, use     
-\f1\b man git-commit
+\
+Note: you\'92ll be asked to edit the comment about the push. See editor notes below. \
+\
+To put changes from local computer to master branch github: (ps "origin" is basically the path to github)\
+
+\f1\b   git push origin master
 \f0\b0 \
 \
+\
+Note: for more info about the git commit command in particular, use     
+\f1\b man git-commit
+\f0\b0 \
 \
 check how things stand  (can also use   
 \f1\b git log
 \f0\b0    )\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
-\f1\b \cf0    git status
+\f1\b    git status
 \f0\b0 \
 \
 Oops, wrong author registered as the author of these changes, so\
    
 \f1\b \CocoaLigature0 git commit --amend --author="mroam <mroam@saintannsny.org>\'94
 \f0\b0 \CocoaLigature1 \
-\
-To put changes from local computer to master branch github: (ps "origin" is basically the path to github)\
-
-\f1\b   git push origin master
-\f0\b0 \
 \
 ps: to remove old git credentials (which we found with    check ls -A ~   ). Also edit keychain!\
 
